@@ -1,28 +1,19 @@
-const {readdirSync, readFileSync} = require('fs');
-const {join, resolve} = require('path');
-
 // Store code snippets in GraphQL for the home page examples.
 // Snippets will be matched with markdown templates of the same name.
-exports.sourceNodes = ({graphql, actions}) => {
+exports.onCreateNode = async ({ node, actions, loadNodeContent, createNodeId }) => {
   const {createNode} = actions;
-
-  const path = resolve(__dirname, '../../content/home/examples');
-  const files = readdirSync(path);
-
-  files.forEach(file => {
-    if (file.match(/\.js$/)) {
-      const code = readFileSync(join(path, file), 'utf8');
-      const id = file.replace(/\.js$/, '');
-
-      createNode({
-        id,
-        children: [],
-        parent: 'EXAMPLES',
-        internal: {
-          type: 'ExampleCode',
-          contentDigest: JSON.stringify(code),
-        },
-      });
-    }
-  });
+  // listen to updates of file nodes that are marked with 'packages` name (in gatsby-config.js)
+  // and are in `content/home/examples` directory and have .js extension
+  if (node.internal.type === 'File' && node.sourceInstanceName === 'packages' && node.relativeDirectory === 'home/examples' && node.extension === 'js') {
+    const code = await loadNodeContent(node);
+    createNode({
+      id: node.name,
+      children: [],
+      parent: node.id,
+      internal: {
+        type: 'ExampleCode',
+        contentDigest: JSON.stringify(code),
+      },
+    });
+  }
 };

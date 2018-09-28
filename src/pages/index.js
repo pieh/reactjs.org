@@ -70,6 +70,11 @@ class Home extends Component {
     });
   }
 
+  componentDidUpdate(prevProps) {
+    const simpleComponentExampleNode = this.props.data.code.edges.find(({node: { id }}) => id === 'a-simple-component');
+    console.log('did update', simpleComponentExampleNode.node.internal.contentDigest);
+  }
+
   render() {
     const {examples, marketing} = this.state;
     const {location} = this.props;
