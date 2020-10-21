@@ -16,6 +16,7 @@ module.exports = {
   mapping: {
     'MarkdownRemark.frontmatter.author': 'AuthorYaml',
   },
+  __experimentalQueryOnDemand: true,
   plugins: [
     'gatsby-source-react-error-codes',
     'gatsby-transformer-authors-yaml',
@@ -92,7 +93,12 @@ module.exports = {
       },
     },
     'gatsby-transformer-sharp',
-    'gatsby-plugin-sharp',
+    {
+      resolve: 'gatsby-plugin-sharp',
+      options: {
+        experimentalDisableLazyProcessing: false,
+      },
+    },
     {
       resolve: 'gatsby-plugin-google-analytics',
       options: {
